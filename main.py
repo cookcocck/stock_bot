@@ -4,6 +4,8 @@ from loguru import logger
 import time
 import random
 import pandas_ta as ta
+import datetime
+import dateutil
 
 class StockBot:
     def __init__(self) -> None:
@@ -61,14 +63,12 @@ class StockBot:
                 df = df.iloc[::-1]
                 df.reset_index(drop=True, inplace=True)
 
-                with open('data.txt', 'w') as f:
-                    # check dkx crossing up dkx_ma
-                    if df.iloc[-2]['dkx'] < df.iloc[-2]['dkx_sma'] and df.iloc[-1]['dkx'] > df.iloc[-1]['dkx_sma']:           
-                        # check macd and signal
-                        macd_df = ta.macd(df['收盘'], self.m_macd_config['fast'], self.m_macd_config['slow'], self.m_macd_config['signal'])
-                        if macd_df.iloc[-1]['MACD_12_26_9'] > 0 and macd_df.iloc[-1]['MACD_12_26_9'] > macd_df.iloc[-1]['MACDs_12_26_9']:
-                            logger.success('{0} Cross Up !'.format(symbol))
-                            f.writelines('{0} Cross Up!'.format(symbol))
+                # check dkx crossing up dkx_sma
+                if df.iloc[-2]['dkx'] < df.iloc[-2]['dkx_sma'] and df.iloc[-1]['dkx'] > df.iloc[-1]['dkx_sma']:           
+                    # check macd and signal
+                    macd_df = ta.macd(df['收盘'], self.m_macd_config['fast'], self.m_macd_config['slow'], self.m_macd_config['signal'])
+                    if (macd_df.iloc[-1]['MACD_12_26_9'] > 0 and macd_df.iloc[-1]['MACDs_12_26_9'] > 0) and (macd_df.iloc[-1]['MACD_12_26_9'] > macd_df.iloc[-1]['MACDs_12_26_9']):
+                        logger.success('{0} Cross Up !'.format(symbol))
             except:
                 logger.error('process {0} error !'.format(symbol)) 
 
@@ -76,7 +76,9 @@ class StockBot:
 if __name__ == '__main__':
     stock_bot = StockBot()
     stock_bot.get_symbols()
-    stock_bot.dkx_cross_strategy(period='daily', start_date='20230121', end_date='20240221')
+    today = datetime.datetime.now().strftime('%Y%m%d')
+    last_year_tody = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime('%Y%m%d')
+    stock_bot.dkx_cross_strategy(period='daily', start_date=last_year_tody, end_date=today)
 
 
 
