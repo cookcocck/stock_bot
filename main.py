@@ -21,8 +21,10 @@ class StockBot:
         self.m_symbols = df['代码']
 
     def dkx_cross_strategy(self, period: str, start_date: str, end_date: str):
-        for symbol in self.m_symbols:
+        logger.add('result.log')
+        for symbol_idx, symbol in enumerate(self.m_symbols):
             try:
+                logger.info('total {0}, current check {1}-{2}'.format(len(self.m_symbols),symbol_idx, symbol))
                 time.sleep(random.choice([0.2, 0.3, 0.4, 0.5]))
 
                 # get symbol data
@@ -54,7 +56,7 @@ class StockBot:
                 for idx in range(0, df.shape[0]):
                     sum = 0
                     if df.iloc[idx: idx + 10].shape[0] == 10:
-                        for row_idx, row in df.iloc[idx: idx + 10].iterrows():
+                        for _, row in df.iloc[idx: idx + 10].iterrows():
                             sum += row['dkx']
                     sum /= 10
                     dkx_sma[idx] = sum
