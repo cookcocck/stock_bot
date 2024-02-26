@@ -39,7 +39,7 @@ class StockBot:
             all_task = [pool.submit(StockBot.__dkx_cross_strategy, split_symbols[i].copy(), period, start_date, end_date, self.m_macd_config) for i in range(0, len(split_symbols))]
             wait(all_task, return_when=ALL_COMPLETED)
             logger.info('check finished')
-            
+
     def __dkx_cross_strategy(symbols: list, period: str, start_date: str, end_date: str, macd_cofig: dict):
         for _, symbol in enumerate(symbols):
             try:
