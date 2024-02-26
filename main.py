@@ -36,7 +36,7 @@ class StockBot:
         logger.info('start checking...')
         split_symbols = [self.m_symbols[i:i+int(len(self.m_symbols) / 10)] for i in range(0, len(self.m_symbols), int(len(self.m_symbols) / 10))]
         with ThreadPoolExecutor(max_workers=10, thread_name_prefix="stock_bot_") as pool:
-            all_task = [pool.submit(StockBot.__dkx_cross_strategy, split_symbols[i].copy(), period, start_date, end_date, self.m_macd_config) for i in range(0, len(split_symbols))]
+            all_task = [pool.submit(StockBot.__dkx_cross_strategy, split_symbols[i], period, start_date, end_date, self.m_macd_config) for i in range(0, len(split_symbols))]
             wait(all_task, return_when=ALL_COMPLETED)
             logger.info('check finished')
 
